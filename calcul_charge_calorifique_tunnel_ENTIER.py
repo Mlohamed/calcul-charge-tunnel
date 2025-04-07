@@ -1,4 +1,3 @@
-
 import pandas as pd
 import streamlit as st
 from io import BytesIO
@@ -10,6 +9,17 @@ st.markdown("""
 Ce calculateur vous permet d'estimer l'énergie thermique libérée en cas d'incendie pour différents éléments installés dans un tunnel (câbles, couvercles FRP, etc.).
 """)
 
+# Liste de matériaux avec PCS par défaut (MJ/kg)
+pcs_reference = {
+    "Câble PVC": 20,
+    "Câble PE": 40,
+    "Câble XLPE": 38,
+    "Composite (FRP)": 20,
+    "Plastique": 35,
+    "Caoutchouc": 30,
+    "Bois": 17
+}
+
 # Formulaire de saisie
 elements = []
 st.subheader("Ajouter un élément")
@@ -19,7 +29,9 @@ with st.form("element_form"):
     unite = st.selectbox("Unité de mesure", ["m", "m²"])
     quantite = st.number_input("Quantité (longueur ou surface)", min_value=0.0, step=1.0)
     masse = st.number_input("Masse linéaire ou surfacique (kg/unité)", min_value=0.0, step=0.1)
-    pcs = st.number_input("Pouvoir calorifique supérieur (MJ/kg)", min_value=0.0, step=0.5)
+    pcs_material = st.selectbox("Matériau (pour PCS par défaut)", ["-- Aucun --"] + list(pcs_reference.keys()))
+    pcs = st.number_input("Pouvoir calorifique supérieur (MJ/kg)", min_value=0.0, step=0.5,
+                           value=pcs_reference.get(pcs_material, 0.0))
     submit = st.form_submit_button("Ajouter")
 
     if submit and element:
