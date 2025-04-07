@@ -45,11 +45,19 @@ if "elements" in st.session_state and st.session_state["elements"]:
     st.markdown(f"**➡️ Charge calorifique totale : {total_mj:.2f} MJ**")
     st.markdown(f"**➡️ Équivalent essence : {total_l:.2f} litres**")
 
-    st.download_button(
-        label="📥 Télécharger le tableau en Excel",
-        data=df.to_excel(index=False, engine='openpyxl'),
-        file_name="charge_calorifique_tunnel.xlsx",
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
+  from io import BytesIO
+
+# Conversion en binaire pour téléchargement
+output = BytesIO()
+df.to_excel(output, index=False, engine='openpyxl')
+processed_data = output.getvalue()
+
+# Bouton de téléchargement
+st.download_button(
+    label="📥 Télécharger le tableau en Excel",
+    data=processed_data,
+    file_name="charge_calorifique_tunnel.xlsx",
+    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+
 else:
     st.info("Ajoutez au moins un élément pour afficher les résultats.")
